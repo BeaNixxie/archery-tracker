@@ -9,11 +9,19 @@ st.set_page_config(page_title="Archery Tracker", page_icon="🏹", layout="wide"
 
 @st.cache_resource
 def get_worksheet():
-    creds = Credentials.from_service_account_info(
-        st.secrets["gcp_service_account"],
-        scopes=["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"])
-    gc = gspread.authorize(creds)
-    return gc.open_by_url("https://docs.google.com/spreadsheets/d/1Ui-oteX0ax8b4iYz3nYCf44PK2P4l0tgFp7zpgq9UVE/edit").worksheet("History")
+    try:
+        creds = Credentials.from_service_account_info(
+            st.secrets["gcp_service_account"],
+            scopes=["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"])
+        gc = gspread.authorize(creds)
+        return gc.open_by_url("https://docs.google.com/spreadsheets/d/1Ui-oteX0ax8b4iYz3nYCf44PK2P4l0tgFp7zpgq9UVE/edit").worksheet("History")
+    except Exception as e:
+        st.error(f"Google Sheets connection error: {str(e)}")
+        return None
+
+worksheet = get_worksheet()
+if worksheet is None:
+    st.stop()
 
 # --- 2. DATA LOADING FUNCTIONS ---
 @st.cache_data
