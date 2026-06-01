@@ -26,7 +26,7 @@ def load_archery_references():
 
 @st.cache_data(ttl=60)
 def load_cloud_data():
-    data = worksheet.get_all_records(default_blank=0)
+    data = worksheet.get_all_records(default_blank="")
     df = pd.DataFrame(data)
     if not df.empty:
         cols_to_fix = ["Month", "Raw_Score", "Bonus_Penalty", "Allowance_Used", "Final_Monthly_Total", "Handicap_Saved"]
