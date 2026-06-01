@@ -26,14 +26,18 @@ def load_archery_references():
 
 @st.cache_data(ttl=60)
 def load_cloud_data():
-    data = worksheet.get_all_records(default_blank="")
-    df = pd.DataFrame(data)
-    if not df.empty:
-        cols_to_fix = ["Month", "Raw_Score", "Bonus_Penalty", "Allowance_Used", "Final_Monthly_Total", "Handicap_Saved"]
-        for col in cols_to_fix:
-            if col in df.columns:
-                df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0)
-    return df
+    try:
+        data = worksheet.get_all_records(default_blank="")
+        df = pd.DataFrame(data)
+        if not df.empty:
+            cols_to_fix = ["Month", "Raw_Score", "Bonus_Penalty", "Allowance_Used", "Final_Monthly_Total", "Handicap_Saved"]
+            for col in cols_to_fix:
+                if col in df.columns:
+                    df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0)
+        return df
+    except Exception as e:
+        st.error(f"Error loading data: {str(e)}")
+        return pd.DataFrame()
 
 # --- 3. MAINTENANCE LOGIC ---
 from datetime import datetime
