@@ -9,18 +9,16 @@ st.set_page_config(page_title="Archery Tracker", page_icon="🏹", layout="wide"
 
 @st.cache_resource
 def get_worksheet():
-    creds = Credentials.from_service_account_file("C:/Users/nicky/Desktop/ArcheryApp/google_creds.json", 
+    creds = Credentials.from_service_account_info(
+        st.secrets["gcp_service_account"],
         scopes=["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"])
     gc = gspread.authorize(creds)
     return gc.open_by_url("https://docs.google.com/spreadsheets/d/1Ui-oteX0ax8b4iYz3nYCf44PK2P4l0tgFp7zpgq9UVE/edit").worksheet("History")
 
-worksheet = get_worksheet()
-HEADERS = ["Archer_Name", "Group", "Month", "Round", "Raw_Score", "Bonus_Penalty", "Allowance_Used", "Final_Monthly_Total", "Handicap_Saved", "Hits", "Golds", "Bow_Type"]
-
 # --- 2. DATA LOADING FUNCTIONS ---
 @st.cache_data
 def load_archery_references():
-    excel_path = "C:/Users/nicky/Desktop/ArcheryApp/tidy_archery_reference.xlsx"
+    excel_path = "tidy_archery_reference.xlsx"
     xl = pd.ExcelFile(excel_path)
     master_df = xl.parse(xl.sheet_names[0])
     master_df.columns = master_df.columns.str.strip()
